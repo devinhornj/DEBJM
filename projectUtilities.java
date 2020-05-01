@@ -173,10 +173,10 @@ public class projectUtilities
     } // End of deleteStudent() method
 
     ////////////////////////////
-    ///// NEED TO FINISH 4 /////
+    ///// NEED TO FINISH 3 /////
     ////////////////////////////
 	/**
-	 * 4. Show and replace CSCI 300+ Elective
+	 * 3. Show and replace CSCI 300+ Elective
 	 * 
      * Purpose: List all courses that could replace this person’s 300+ elective 
      *          based on their major and course already taken. A valid course is 
@@ -207,7 +207,7 @@ public class projectUtilities
     }
     
 	/**
-	 * 5. Course Availability Look-Up
+	 * 4. Course Availability Look-Up
 	 * 
      * Purpose: To display when a course is offered during the school year. 
      *          (EG. Fall, Spring, Odd, Even, Every).
@@ -255,7 +255,7 @@ public class projectUtilities
     } // End of availableCourses() method
 
 	/**
-	 * 6. Show all advisees.
+	 * 5. Show all advisees.
      * 
      * Purpose: List all students that this faculty member advises.
      * 
@@ -297,7 +297,7 @@ public class projectUtilities
     } // End of getAdvisees() method
 
 	/**
-	 * 7. Edit a Report AFTER it has been generated
+	 * 6. Edit a Report AFTER it has been generated
      * 
      * Purpose: Allow faculty to edit a graduation plan to their liking after 
      *          generating by adding, removing, or updating courses. These changes 
@@ -362,7 +362,7 @@ public class projectUtilities
     } // End of editReport() method
 
     /**
-	 * 8. View Courses
+	 * 7. View Courses
      * 
      * Purpose: View all of the available courses based on their Fall/Spring availability. 
      * 
@@ -397,5 +397,47 @@ public class projectUtilities
 		
 		return rset; 
 	} // End of viewCourses() method
+/**
+	 * 8. View Grad Plan
+     * 
+     * Purpose: Allows a faculty member to view a specific student’s grad plan.
+     	There is nothing changed, just shows the current grad plan for the student.
+     * 
+     * User Groups: Faculty. 
+	 * 
+	 * @return ResultSet that has the Title, Num, Dept, Semester, and Year for all
+     *         available courses in the database. 
+	 */
+	public ResultSet viewGP()
+	{
+		ResultSet rset = null;
+		String sql = null;
 
+        try 
+        {
+			// Create a Statement and an SQL string for the statement
+			sql = "SELECT * " + 
+				"FROM STUDENT as s join REQUIRES as r on s.majorType = r.Type " +
+				"WHERE IdNumber = ? " +
+				"ORDER BY r.cSemester"; 
+			sql2= "SELECT * "+
+				"FROM STUDENT as s join TAKES as t on s.IdNumber = t.StudentId "+
+				"WHERE s.IdNumber = ? "+
+				"ORDER BY r.Csemester";
+
+            
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+
+			pstmt.clearParameters();
+
+			rset = pstmt.executeQuery(sql);
+			
+        } 
+        catch (SQLException e) 
+        {
+			System.out.println("Could NOT execute viewCourses() " + e.getMessage() + sql);
+		}
+		
+		return rset; 
+	} // End of viewCourses() method
 }// Utilities class
