@@ -176,7 +176,7 @@ public class projectUtilities
     ///// NEED TO FINISH 4 /////
     ////////////////////////////
 	/**
-	* 4. Show and replace CSCI 300+ Elective
+	 * 4. Show and replace CSCI 300+ Elective
 	 * 
      * Purpose: List all courses that could replace this personâ€™s 300+ elective 
      *          based on their major and course already taken. A valid course is 
@@ -251,7 +251,6 @@ public class projectUtilities
     	
     	return 0;
     }
-    
 	/**
 	 * 5. Course Availability Look-Up
 	 * 
