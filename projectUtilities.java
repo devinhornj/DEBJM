@@ -172,9 +172,7 @@ public class projectUtilities
 		}
     } // End of deleteStudent() method
 
-    ////////////////////////////
-    ///// NEED TO FINISH 4 /////
-    ////////////////////////////
+ 
 	/**
 	 * 4. Show and replace CSCI 300+ Elective
 	 * 
@@ -201,7 +199,7 @@ public class projectUtilities
     public int replace300Elective(String IDNumber, String courseTitle, String replaceTitle) throws SQLException
     {
       
-    	
+    	int result = 0;
     	String firstState = "SELECT count (*)" +
     			"FROM student as s join requires as r on s.majorType = r.Type" +
     			"WHERE IdNumber = ? and WHERE r.reqCourse LIKE ‘%300+%’";
@@ -243,13 +241,16 @@ public class projectUtilities
             " = Title), (SELECT Semester FROM Courses WHERE" + userReplacement + " = Title))";
             
             Statement stm = conn.createStatement();
+		
             ResultSet rset3 = stm.executeQuery(addState);
+	    result = stm.executeUpdate()
             
     	} else {
     		System.out.println("There are no 300+ courses to replace!");
     	}
     	
-    	return 0;
+    	
+	return result;
     }
 	/**
 	 * 5. Course Availability Look-Up
