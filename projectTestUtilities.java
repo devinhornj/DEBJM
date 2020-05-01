@@ -30,55 +30,55 @@ public class projectTestUtilities
 			choice = getChoice();
             switch (choice) 
             {
-			case 0: {
+			case 1: {
 				openDB();
 				break;
 			}
-			case 1: {
-				callAddCourse();
-				break;
-			}
 			case 2: {
-				callDeleteStudent();
+				addCourse();
 				break;
 			}
 			case 3: {
-				callReplace300Elective();
+				deleteStudent();
 				break;
 			}
 			case 4: {
-				callAvailableCourses();
+			    replace300Elective();
 				break;
 			}
 			case 5: {
-				callGetAdvisees();
+				availableCourses();
 				break;
 			}
 			case 6: {
-				callEditReport();
+				getAdvisees();
 				break;
 			}
 			case 7: {
-				callViewCourses();
+				editReport();
 				break;
 			}
 			case 8: {
-				callViewGP();
+				viewCourses();
 				break;
 			}
 			case 9: {
-				callGenerateGP();
-				break;
-			}
-			case 19: {
 				testObj.closeDB(); // Close the DB connection 
 				break;
 			}
-			case 20: {
+			case 10: {
 				done = true;
 				System.out.println("Good bye");
 				break;
             }
+			case 11: {
+				viewGradPlan();
+				break;
+			}
+			case 12: {
+				createGradPlan();
+				break;
+			}
 		} // Switch
 	}
 
@@ -87,7 +87,7 @@ public class projectTestUtilities
     // Display Menu! 
     static void displaymenu() 
     {
-		System.out.println("0)  Call openDB(String, String)");
+		System.out.println("1)  Call openDB(String, String)");
 		System.out.println("2)  Call addCourse(String, String, String, String, String, String, String)");
 		System.out.println("3)  Call deleteStudent(String)");
 		System.out.println("4)  Call replace300Elective()");
@@ -95,8 +95,10 @@ public class projectTestUtilities
 		System.out.println("6)  Call getAdvisees(String)");
 		System.out.println("7)  Call editReport(String, String, String)");
 		System.out.println("8)  Call viewCourses()");
-		System.out.println("19)  Close the DB");
-		System.out.println("20) Quit");
+		System.out.println("9)  Close the DB");
+		System.out.println("10) Quit");
+		System.out.println("11) Call viewGradPlan()");
+		System.out.println("12) Call createGradPlan()"); 
     }
 
     // Retrieves which method the user would like to run. 
@@ -104,7 +106,7 @@ public class projectTestUtilities
     {
 		String input;
 		int i = 0;
-        while (i < 0 || i > 21) 
+        while (i < 1 || i > 12) 
         {
 			try {
 				System.out.print("Please enter an integer between 1-12: ");
@@ -134,7 +136,7 @@ public class projectTestUtilities
     
     // Test addCourse(String courseName, String department, String courseNumber, 
 	// String numCredits, String description, String semester, String year) Method 
-    static void callAddCourse() throws SQLException
+    static void addCourse() throws SQLException
     {
     	String courseName = "Cloud Computing";
     	String department = "CSCI";
@@ -147,50 +149,70 @@ public class projectTestUtilities
     	testObj.addCourse(courseNumber, department, semester, year, courseName, numCredits, description);
     }
 
-    // Test deleteStudent(String) Method
-    static void callDeleteStudent() throws SQLException
+    // Test deleteStudent(String studentID) Method
+    static void deleteStudent() throws SQLException
     {
-
+    	String id = "123456789";
+    	
+    	testObj.deleteStudent(id);
     }
 
     // Test replace300Elective() Method
-    static void callReplace300Elective() throws SQLException
+    static void replace300Elective() throws SQLException
     {
 
     }
 
     // Test availableCourses(String) Method
-    static void callAvailableCourses() throws SQLException
+    static void availableCourses() throws SQLException
     {
-
+    	String courseN = "390";
+    	String dept = "CSCI";
+    	
+    	testObj.availableCourses(courseN, dept);
     }
 
     // Test getAdvisees(String) Method
-    static void callGetAdvisees() throws SQLException
+    static void getAdvisees() throws SQLException
     {
-
+    	String facID = "333444555";
+    	
+    	testObj.getAdvisees(facID);
     }
 
     // Test editReport(String, String, String) Method
-    static void callEditReport() throws SQLException
+    static void editReport() throws SQLException
     {
-
+    	String studentID = "123456789";
+    	String courseTitle = "Cloud Computing";
+    	String cYear = "0";
+    	String currentSemester = "F";
+    	
+    	testObj.editReport(studentID, courseTitle, cYear, currentSemester);
     }
-
+    
     // Test viewCourses() Method
-    static void callViewCourses() throws SQLException
+    static void viewCourses() throws SQLException
     {
-
+    	String semesterChoice = "S";
+    	
+    	testObj.viewCourses(semesterChoice);
     }
-    // Test viewGP() Method
-	static void callViewGP() throws SQLException
+    
+    // Test viewGradPlan() Method
+    static void viewGradPlan() throws SQLException
     {
-
+    	String studentID = "123456789";
+    	
+    	testObj.viewGradPlan(studentID);
     }
-    // Test generateGP() Method
-	static void callGenerateGP() throws SQLException
+    
+    // Test createGradPlan() Method 
+    static void createGradPlan() throws SQLException
     {
-
+    	String studentID = "123456789";
+    	
+    	testObj.createGradPlan(studentID);
     }
 		
 } // End of projectTestUtilities 
