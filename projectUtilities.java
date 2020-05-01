@@ -1,4 +1,4 @@
-//package dbUtil;
+package dbUtil;
 /**
  * This class provides some basic methods for accessing a MariaDB database.
  * It uses Java JDBC and the MariaDB JDBC driver, mariadb-java-client-2.4.0.jar
@@ -14,7 +14,7 @@ import java.sql.*;
  */
 public class projectUtilities
 {
-	private Connection conn = null; // Connection object
+	private Connection conn = null; // Connection Object
 	 
 	/**
 	 * @return the conn
@@ -92,11 +92,11 @@ public class projectUtilities
      *         courseNumber will be displayed; however, an error message will
      *         be shown if the operation fails.
 	 */
-    public void addCourse(String courseName, String department, String courseNumber, 
+    public ResultSet addCourse(String courseName, String department, String courseNumber, 
                           String numCredits, String description, String semester, String year)
     {
         String sql = null;
-        String result = ""; 
+        ResultSet result = null; 
 
         try 
         {
@@ -115,16 +115,17 @@ public class projectUtilities
             pstmt.setString(6, numCredits); // Set 6th Parameter
             pstmt.setString(7, description); // Set 7th Parameter
 
-            result = pstmt.executeQuery(sql);
-            System.out.println(result);
+            result = pstmt.executeQuery();
             
-            System.out.println("Successful Insertion!" + courseName + " " + courseNumber + " was added to the COURSE table.");
+          //  System.out.println("Successful Insertion!" + courseName + " " + courseNumber + " was added to the COURSE table.");
         } 
         
         catch (SQLException e) 
         {
             System.out.println("Insertion failed. Could not add " + courseName + " " + courseNumber + " to the COURSE table." + e.getMessage() + sql);
 		}
+        
+        return result; 
     }
     // End of addCourse() method 
 
@@ -147,7 +148,7 @@ public class projectUtilities
     public void deleteStudent(String studentID)
     { 
         String sql = null;
-        String result = ""; 
+        ResultSet result = null; 
 
         try 
         {
@@ -160,15 +161,14 @@ public class projectUtilities
 			pstmt.clearParameters();
             pstmt.setString(1, studentID); // Set 1st Parameter
 
-            result = pstmt.executeQuery(sql);
-            System.out.println(result);
+            result = pstmt.executeQuery();
             
             System.out.println("Successful Deletion! The student with ID: " + studentID + " has been deleted.");
         } 
         
         catch (SQLException e) 
         {
-            System.out.println("Deletion failed. The student with ID: " + studentID + " still exists in the database." + e.getMessage() + sql);
+            System.out.println("Deletion failed. The student with ID: " + studentID + " still exists in the database." + e.getMessage());
 		}
     } // End of deleteStudent() method
 
@@ -242,8 +242,7 @@ public class projectUtilities
             pstmt.clearParameters();
             pstmt.setString(1, courseNumber); // Set the 1st parameter
 
-            rset = pstmt.executeQuery(sql);
-            
+            rset = pstmt.executeQuery();
 			
         } 
         catch (SQLException e) 
@@ -285,7 +284,7 @@ public class projectUtilities
 			pstmt.clearParameters();
 			pstmt.setString(1, facultyID); // Set the 1st parameter
 
-			rset = pstmt.executeQuery(sql);
+			rset = pstmt.executeQuery();
 			
         } 
         catch (SQLException e) 
@@ -313,7 +312,7 @@ public class projectUtilities
      * 
 	 * Result: The report is altered to the user's specifications and saved. 
 	 */
-    public void editReport(String studentID, String courseTitle, String cYear, String currentSemester)
+    public ResultSet editReport(String studentID, String courseTitle, String cYear, String currentSemester)
     {
         ResultSet rset = null;
         ResultSet rset2 = null;
@@ -339,7 +338,7 @@ public class projectUtilities
             PreparedStatement pstmt2 = conn.prepareStatement(sql2);
             PreparedStatement pstmt3 = conn.prepareStatement(sql3);
 
-            // Set the Paramters for the INSERT
+            // Set the Parameters for the INSERT
             pstmt.clearParameters();
             pstmt.setString(1, studentID);
             pstmt.setString(2, courseTitle);
@@ -350,15 +349,19 @@ public class projectUtilities
             pstmt2.clearParameters();
             pstmt2.setString(1, studentID);
             pstmt2.setString(2, courseTitle);
+            
+            pstmt3.clearParameters();
 
-            rset = pstmt.executeInsert(sql);
-            rset2 = pstmt2.executeQuery(sql2);
-            rset3 = pstmt3.executeUpdate(sql3);
+            rset = pstmt.executeQuery();
+            rset2 = pstmt2.executeQuery();
+            rset3 = pstmt3.executeQuery();
         } 
         catch (SQLException e) 
         {
 			System.out.println("Could NOT execute editReport() " + e.getMessage() + sql);
         }
+        
+        return rset3;
     } // End of editReport() method
 
     /**
@@ -371,7 +374,7 @@ public class projectUtilities
 	 * @return ResultSet that has the Title, Num, Dept, Semester, and Year for all
      *         available courses in the database. 
 	 */
-	public ResultSet viewCourses()
+	public ResultSet viewCourses(String semester)
 	{
 		ResultSet rset = null;
 		String sql = null;
@@ -380,15 +383,16 @@ public class projectUtilities
         {
 			// Create a Statement and an SQL string for the statement
 			sql = "SELECT Title, Num, Dept, Semester, Year " + 
-                  "FROM COURSE" + 
+                  "FROM COURSE" +
+                  "WHERE cSemester = ? OR WHERE cSemester = 'B'" +
                   "ORDER BY Semester"; 
             
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 
-			pstmt.clearParameters();
+            pstmt.clearParameters();
+            pstmt.setString(1, semester);
 
-			rset = pstmt.executeQuery(sql);
-			
+			rset = pstmt.executeQuery();
         } 
         catch (SQLException e) 
         {
@@ -397,5 +401,105 @@ public class projectUtilities
 		
 		return rset; 
 	} // End of viewCourses() method
+	
+	/**
+	 * 9. View Grad Plan
+     * 
+     * Purpose: Allows a faculty member to view a specific student’s grad plan. 
+     *          There is nothing changed, just shows the current grad plan for the student.
+     * 
+     * User Group: Faculty
+     * 
+     * @param studentID -- The student's unique ID number 
+	 * 
+	 * Result: Full grad plan with the list of classes that need to be completed, and 
+	 *         and the list of classes that have already been taken(without duplicates).
+	 */
+	public ResultSet viewGradPlan(String studentID)
+	{
+		ResultSet rset = null;
+		ResultSet rset2 = null; 
+		String sql = null;
+		String sql2 = null;
+
+        try 
+        {
+			// Create a Statement and an SQL string for the statement
+			sql = "SELECT * " + 
+					"FROM STUDENT as s join REQUIRES as r on s.majorType = r.Type" + 
+					"WHERE IdNumber = ?" + 
+					"ORDER BY r.cSemester";
+					
+			sql2 =	"SELECT * " + 
+					"FROM STUDENT as s join TAKES as t on s.IdNumber = t.StudentId" + 
+					"WHERE s.IdNumber = ?" + 
+					"ORDER BY r.Csemester"; 
+            
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+			PreparedStatement pstmt2 = conn.prepareStatement(sql2);
+
+            pstmt.clearParameters();
+            pstmt.setString(1, studentID);
+            
+            pstmt2.clearParameters();
+            pstmt2.setString(1,  studentID);
+
+			rset = pstmt.executeQuery();
+			rset2 = pstmt2.executeQuery();
+        } 
+        catch (SQLException e) 
+        {
+			System.out.println("Could NOT execute viewCourses() " + e.getMessage() + sql);
+		}
+		
+		return rset2; 
+	} // End of viewGradPlan() method
+	
+	/**
+	 * 10. Generate a New Grad Plan for a Student 
+     * 
+     * Purpose: A faculty member can create a new grad plan for a specified student.
+     * 
+     * User Group: Faculty
+     * 
+     * @param studentID -- The student's unique ID number 
+     * @param majorT -- The student's major type (BS or BA)
+	 * 
+	 * Result: Newly generated grad plan for a new CS student.
+	 * 
+	 * Note: Assumes the student has already been added. 
+	 */
+	public ResultSet createGradPlan(String studentID, String majorT)
+	{
+		ResultSet rset = null;
+		String sql = null;
+
+        try 
+        {
+			// Create a Statement and an SQL string for the statement
+			sql = "SELECT * " + 
+					"FROM STUDENT as s join REQUIRES as r on s.majorType = r.Type" + 
+					"WHERE IdNumber = ?" + 
+					"ORDER BY r.cSemester"; 
+            
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+
+            pstmt.clearParameters();
+            pstmt.setString(1, studentID);
+            pstmt.setString(2,  majorT);
+
+
+			rset = pstmt.executeQuery();
+        } 
+        catch (SQLException e) 
+        {
+			System.out.println("Could NOT execute viewCourses() " + e.getMessage() + sql);
+		}
+		
+		return rset; 
+	} // End of viewCourses() method
+	
+	
+	
 
 }// Utilities class

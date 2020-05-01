@@ -1,6 +1,6 @@
-//package dbUtil;
+package dbUtil;
 /**
- * This program is used to test the Utilities class
+ * This program is used to test the projectTestUtilities class
  */
  
 // You need to import the java.sql package to use JDBC
@@ -14,8 +14,8 @@ import java.util.Scanner;
 public class projectTestUtilities 
 {
 	// Global variables
-	static Utilities testObj = new Utilities(); 		// Utilities object for testing
-    static Scanner keyboard = new Scanner(System.in); 	// standard input
+	static projectUtilities testObj = new projectUtilities(); // projectTestUtilities object for testing
+    static Scanner keyboard = new Scanner(System.in); // Standard input
     
     public static void main(String[] args) throws SQLException 
     {
@@ -63,7 +63,7 @@ public class projectTestUtilities
 				break;
 			}
 			case 9: {
-				testObj.closeDB(); //Close the DB connection 
+				testObj.closeDB(); // Close the DB connection 
 				break;
 			}
 			case 10: {
@@ -71,22 +71,22 @@ public class projectTestUtilities
 				System.out.println("Good bye");
 				break;
             }
-		}// switch
-		}
+		} // Switch
+	}
 
-	}// main
+	} // Main
 
     // Display Menu! 
     static void displaymenu() 
     {
-		System.out.println("1)  call openDB(String, String)");
-		System.out.println("2)  call addCourse(String, String, String, String, String, String, String)");
-		System.out.println("3)  call deleteStudent(String)");
-		System.out.println("4)  call replace300Elective()");
-		System.out.println("5)  call availableCourses(String)");
-		System.out.println("6)  call getAdvisees(String)");
-		System.out.println("7)  call editReport(String, String, String)");
-		System.out.println("8)  call viewCourses()");
+		System.out.println("1)  Call openDB(String, String)");
+		System.out.println("2)  Call addCourse(String, String, String, String, String, String, String)");
+		System.out.println("3)  Call deleteStudent(String)");
+		System.out.println("4)  Call replace300Elective()");
+		System.out.println("5)  Call availableCourses(String)");
+		System.out.println("6)  Call getAdvisees(String)");
+		System.out.println("7)  Call editReport(String, String, String)");
+		System.out.println("8)  Call viewCourses()");
 		System.out.println("9)  Close the DB");
 		System.out.println("10) Quit");
     }
@@ -124,10 +124,19 @@ public class projectTestUtilities
         testObj.openDB(username, password);
     }
     
-    // Test addCourse(String, String, String, String, String, String, String) Method 
+    // Test addCourse(String courseName, String department, String courseNumber, 
+	// String numCredits, String description, String semester, String year) Method 
     static void addCourse() throws SQLException
     {
-
+    	String courseName = "Cloud Computing";
+    	String department = "CSCI";
+    	String courseNumber = "388";
+    	String numCredits = "4";
+    	String description = "Introduction to cloud computing techniques.";
+    	String semester = "F";
+    	String year = "1";
+    	
+    	testObj.addCourse(courseNumber, department, semester, year, courseName, numCredits, description);
     }
 
     // Test deleteStudent(String) Method
