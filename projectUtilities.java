@@ -353,63 +353,46 @@ public class projectUtilities
 	 * 
 	 * User Group: Faculty
      *
-	 * @param studentID -- The student's unique ID number.
-     * @param courseTitle -- The title of the course.
-     * @param cYear -- The year the course is offered.
-     * @param currentSemester -- The semester the course is offered.
+	 * @param idNum -- The student's unique ID number.
+     * @param Title -- The title of the course.
+     * @param Semester -- The semester the course is offered.
      * 
 	 * Result: The report is altered to the user's specifications and saved. 
 	 */
-    public ResultSet editReport(String studentID, String courseTitle, String cYear, String currentSemester)
+    public ResultSet editReport(String Title, String idNum, String semester)
     {
-        ResultSet rset = null;
-        ResultSet rset2 = null;
-        ResultSet rset3 = null; 
-        String sql = null;
-        String sql2 = null;
-        String sql3 = null; 
+        
+        ResultSet rset = null; 
+      
+        String sql = null; 
 
         try 
         {
 			// Create a Statement and an SQL string for the statement
-            sql = "INSERT INTO TAKES" +
-                  "VALUES (StudentID = ?, CourseT = ?, courseYear = ?, Csemester = ?)"; 
-           
-            sql2 = "DELETE FROM TAKES" + 
-                    "WHERE StudentID = ? AND CourseT = ?";
+          
 
-            sql3 = "UPDATE TAKES" + 
-                   "SET IF (TAKES.Csemester = 'F' OR TAKES.Csemester = 'S' or TAKES.Csemester = 'B')" +
-                   "WHERE TAKES.Csemester IS NOT NULL";
+            sql = "UPDATE TAKES" + 
+                   "SET Csemester = ?  +
+                   "WHERE studentID= ? and CourseT= ?";
             
+          
             PreparedStatement pstmt = conn.prepareStatement(sql);
-            PreparedStatement pstmt2 = conn.prepareStatement(sql2);
-            PreparedStatement pstmt3 = conn.prepareStatement(sql3);
 
-            // Set the Parameters for the INSERT
-            pstmt.clearParameters();
-            pstmt.setString(1, studentID);
-            pstmt.setString(2, courseTitle);
-            pstmt.setString(3, cYear);
-            pstmt.setString(4, currentSemester);
-
-            // Set the Parameters for the DELETE
-            pstmt2.clearParameters();
-            pstmt2.setString(1, studentID);
-            pstmt2.setString(2, courseTitle);
+           
             
-            pstmt3.clearParameters();
+            pstmt.clearParameters();
+		pstmt.setString(1, semester);
+		pstmt.setString(2, idNum);
+		pstmt.setString(3, Title);
 
             rset = pstmt.executeQuery();
-            rset2 = pstmt2.executeQuery();
-            rset3 = pstmt3.executeQuery();
         } 
         catch (SQLException e) 
         {
 			System.out.println("Could NOT execute editReport() " + e.getMessage() + sql);
         }
         
-        return rset3;
+        return rset;
     } // End of editReport() method
 
     /**
