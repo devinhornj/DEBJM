@@ -1,4 +1,4 @@
-package dbUtil;
+
 /**
  * This class provides some basic methods for accessing a MariaDB database.
  * It uses Java JDBC and the MariaDB JDBC driver, mariadb-java-client-2.4.0.jar
@@ -187,23 +187,69 @@ public class projectUtilities
 	 * 
      * @param IDNumber -- The student's ID number.
 	 * @param courseTitle -- The name of the course.
+	 * @param replaceTitle -- The name of replacement course
      * 
-     * @return ResultSet that displays where the title will have CSCI 300+ electives 
-     *         and the column header will be (CourseName, CourseID, Prereqs, Credits). 
-     *         Each row will include a different course that could replace the students 
-     *         CSCI 300+ elective. 
+     * @return the number of tuples successfully replaced in the requires table
      * 
      * Note: We need to do an 'except' to remove the courses the student has 
      *       already taken. Essentially, we need to view a student’s required 
      *       courses (minus the ones they’ve already taken). From that table we 
      *       have created, we need to select a course title from one of the ‘300+1’ 
      *       requires and replace it with the course info that matches the title.
+	 * @throws SQLException 
 	 */
-    public ResultSet replace300Elective()
+    public int replace300Elective(String IDNumber, String courseTitle, String replaceTitle) throws SQLException
     {
-        ResultSet rset = null; 
+      
+    	
+    	String firstState = "SELECT count (*)" +
+    			"FROM student as s join requires as r on s.majorType = r.Type" +
+    			"WHERE IdNumber = ? and WHERE r.reqCourse LIKE �%300+%�";
+    	
+    	PreparedStatement pstmt = conn.prepareStatement(firstState);
+        pstmt.clearParameters();
+        pstmt.setString(1, IDNumber); 
+        ResultSet rset = pstmt.executeQuery();
+        
+    	int count = Integer.parseInt(rset.getString(1));
+        
+    	if (count > 0) {
+    		String userReplace = "?";
+    		
+    		String secondState = "SELECT DISTINCT replacement" +
+    				"FROM Replaces" +
+    				"WHERE replaced LIKE" + userReplace;
+    		
+    	    pstmt = conn.prepareStatement(secondState);
+            pstmt.clearParameters();
+            pstmt.setString(2, replaceTitle); 
+            ResultSet rset1 = pstmt.executeQuery();
+            
+            System.out.println(rset1.toString());
 
-        return rset; 
+            String userReplacement = "?";
+            
+            String deleteState = "DELETE" + 
+            		"FROM Requires" + 					
+            		"WHERE reqCourse LIKE" + userReplace;
+            
+            pstmt = conn.prepareStatement(deleteState);
+            pstmt.clearParameters();
+            pstmt.setString(3, courseTitle); 
+            ResultSet rset2 = pstmt.executeQuery();
+            
+            String addState  = "INSERT INTO Requires" +				
+            "VALUES (" + userReplace.substring(0,1) + "," + userReplacement + ", (SELECT Year FROM Courses WHERE" + userReplacement + 
+            " = Title), (SELECT Semester FROM Courses WHERE" + userReplacement + " = Title))";
+            
+            Statement stm = conn.createStatement();
+            ResultSet rset3 = stm.executeQuery(addState);
+            
+    	} else {
+    		System.out.println("There are no 300+ courses to replace!");
+    	}
+    	
+    	return 0;
     }
     
 	/**
