@@ -182,34 +182,30 @@ public class projectUtilities
      *          (num, dept, title, etc.).
      * 
      * User Group: Student 
-	 * 
+     *
      * @param IDNumber -- The student's ID number.
-	 * @param courseTitle -- The name of the course.
-	 * @param replaceTitle -- The name of replacement course
+     * @param courseTitle -- The name of the course.
+     * @param replaceTitle -- The name of replacement course
      * 
      * @return the number of tuples successfully replaced in the requires table
      * 
-     * Note: We need to do an 'except' to remove the courses the student has 
-     *       already taken. Essentially, we need to view a studentâ€™s required 
-     *       courses (minus the ones theyâ€™ve already taken). From that table we 
-     *       have created, we need to select a course title from one of the â€˜300+1â€™ 
-     *       requires and replace it with the course info that matches the title.
-	 * @throws SQLException 
+     * @throws SQLException 
 	 */
     public int replace300Elective(String IDNumber, String courseTitle, String replaceTitle) throws SQLException
     {
       
     	int result = 0;
+	int count = 0;
     	String firstState = "SELECT count (*)" +
     			"FROM student as s join requires as r on s.majorType = r.Type" +
-    			"WHERE IdNumber = ? and WHERE r.reqCourse LIKE ‘%300+%’";
+    			"WHERE IdNumber = ? and WHERE r.reqCourse LIKE ‘%300 +%’";
     	
     	PreparedStatement pstmt = conn.prepareStatement(firstState);
         pstmt.clearParameters();
         pstmt.setString(1, IDNumber); 
         ResultSet rset = pstmt.executeQuery();
         
-    	int count = Integer.parseInt(rset.getString(1));
+    	count = Integer.parseInt(rset.getString(1));
         
     	if (count > 0) {
     		String userReplace = "?";
@@ -246,7 +242,7 @@ public class projectUtilities
 	    result = stm.executeUpdate()
             
     	} else {
-    		System.out.println("There are no 300+ courses to replace!");
+    		System.out.println("There are no 300 + courses to replace!");
     	}
     	
     	
@@ -359,31 +355,23 @@ public class projectUtilities
      * 
 	 * Result: The report is altered to the user's specifications and saved. 
 	 */
-    public ResultSet editReport(String Title, String idNum, String semester)
+    public ResultSet editReport(String semester, String idNum, String title)
     {
         
-        ResultSet rset = null; 
-      
+        ResultSet rset = null;
         String sql = null; 
 
         try 
         {
-			// Create a Statement and an SQL string for the statement
-          
-
             sql = "UPDATE TAKES" + 
-                   "SET Csemester = ?  +
+                   "SET Csemester= ? " +
                    "WHERE studentID= ? and CourseT= ?";
-            
-          
+		
             PreparedStatement pstmt = conn.prepareStatement(sql);
-
-           
-            
             pstmt.clearParameters();
 		pstmt.setString(1, semester);
 		pstmt.setString(2, idNum);
-		pstmt.setString(3, Title);
+		pstmt.setString(3, title);
 
             rset = pstmt.executeQuery();
         } 
