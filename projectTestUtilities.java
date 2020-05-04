@@ -183,12 +183,11 @@ public class projectTestUtilities
     // Test editReport(String, String, String) Method
     static void editReport() throws SQLException
     {
+	String currentSemester = "F";
     	String studentID = "123456789";
     	String courseTitle = "Cloud Computing";
-    	String cYear = "0";
-    	String currentSemester = "F";
     	
-    	testObj.editReport(studentID, courseTitle, cYear, currentSemester);
+    	testObj.editReport(currentSemester, studentID, courseTitle);
     }
     
     // Test viewCourses() Method
